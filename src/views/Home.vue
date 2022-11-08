@@ -16,7 +16,7 @@ onMounted(async () => {
   for (let i = 0; i < suits.length; i++) {
     const suit = suits[i]
 
-    const { url } = await fetch('https://picsum.photos/200/300')
+    const { url } = await fetch('https://picsum.photos/80')
     imagesUrlsBySuit[suit] = url
   }
 
