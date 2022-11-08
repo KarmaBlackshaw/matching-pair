@@ -3,6 +3,10 @@ const suits = [1, 2, 3, 4, 5, 6, 7, 8]
 const doubledSuits = suits
   .flatMap(suit => [suit, suit])
   .sort(() => (Math.random() > 0.5) ? 1 : -1)
+  .map((item, index) => ({
+    value: item,
+    key: index
+  }))
 
 const openCards = reactive({
   first: null,
@@ -11,33 +15,35 @@ const openCards = reactive({
 
 const matchDictionary = ref(new Set([]))
 
-function openCard ({ item, key }) {
-  if (openCards.second) {
+function openCard (suit) {
+  if (openCards.first && openCards.first.key === suit.key) {
+    return
+  }
 
+  if (openCards.second) {
     openCards.first = null
     openCards.second = null
   }
 
   if (!openCards.first) {
-    openCards.first = { item, key }
+    openCards.first = suit
     return
   }
 
-  openCards.second = { item, key }
+  openCards.second = suit
 
   if (isMatch()) {
-    matchDictionary.value.add(item)
+    matchDictionary.value.add(suit.value)
   }
-
 }
 
 function isMatch () {
-  return openCards.first.item === openCards.second.item
+  return openCards.first?.value === openCards.second?.value
 }
 
-function isOpen (item, key) {
-  const firstCardOpen = openCards.first?.item === item && openCards.first?.key === key
-  const secondCardOpen = openCards.second?.item === item && openCards.second?.key === key
+function isOpen (suit) {
+  const firstCardOpen = openCards.first?.value === suit.value && openCards.first?.key === suit.key
+  const secondCardOpen = openCards.second?.value === suit.value && openCards.second?.key === suit.key
 
   return firstCardOpen || secondCardOpen
 }
@@ -56,34 +62,34 @@ function isOpen (item, key) {
 
     <div
       class="
-      grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 grid-flow-row gap-2
-    "
+        grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 grid-flow-row gap-2
+      "
     >
       <div
-        v-for="(suitItem, suitKey) in doubledSuits"
-        :key="suitKey"
+        v-for="suit in doubledSuits"
+        :key="suit.key"
         class="
           border
           rounded
           w-[80px] h-[80px]
           flex justify-center items-center
           cursor-pointer
+          select-none
         "
-        @click="openCard({
-          item: suitItem,
-          key: suitKey
-        })"
+        @click="openCard(suit)"
       >
         <icon-flat-color-icons:checkmark
-          v-if="matchDictionary.has(suitItem)"
+          v-if="matchDictionary.has(suit.value)"
           class="h-[30px] w-[30px]"
         />
 
         <template v-else>
           <span
-            v-if="isOpen(suitItem, suitKey)"
+            v-if="isOpen(suit)"
             class="text-3xl font-poppins font-bold"
-          >{{ suitItem }}</span>
+          >
+            {{ suit.value }}
+          </span>
 
           <icon-simple-icons:ghostery
             v-else
