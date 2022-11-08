@@ -106,7 +106,7 @@ function isOpen (suit) {
             select-none
             overflow-hidden
           "
-          :class="[isOpen(suit) ? 'border-none' : 'border']"
+          :class="[isOpen(suit) && !matchDictionary.has(suit.value) ? 'border-none' : 'border']"
           @click="openCard(suit)"
         >
           <icon-flat-color-icons:checkmark
