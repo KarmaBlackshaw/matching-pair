@@ -47,7 +47,9 @@ function isOpen (item, key) {
 <template>
   <div>
     <div class="flex justify-between mb-2">
-      <h1>Matching Pair</h1>
+      <h1 class="text-2xl font-bold">
+        Matching Pair
+      </h1>
 
       <base-theme-toggle />
     </div>
@@ -63,18 +65,31 @@ function isOpen (item, key) {
         class="
           border
           rounded
-          p-6 sm:p-10
+          w-[80px] h-[80px]
+          flex justify-center items-center
+          cursor-pointer
         "
         @click="openCard({
           item: suitItem,
           key: suitKey
         })"
       >
-        {{
-          matchDictionary.has(suitItem)
-            ? '✔️'
-            : isOpen(suitItem, suitKey) ? suitItem : 'X'
-        }}
+        <icon-flat-color-icons:checkmark
+          v-if="matchDictionary.has(suitItem)"
+          class="h-[30px] w-[30px]"
+        />
+
+        <template v-else>
+          <span
+            v-if="isOpen(suitItem, suitKey)"
+            class="text-3xl font-poppins font-bold"
+          >{{ suitItem }}</span>
+
+          <icon-simple-icons:ghostery
+            v-else
+            class="h-[30px] w-[30px]"
+          />
+        </template>
       </div>
     </div>
   </div>
